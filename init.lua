@@ -594,7 +594,7 @@ require('lazy').setup({
       --  See `:help lsp-config` for information about keys and how to configure
       local servers = {
         -- clangd = {},
-        -- gopls = {},
+        gopls = {},
         -- pyright = {},
         -- rust_analyzer = {},
         --
@@ -614,7 +614,7 @@ require('lazy').setup({
       -- You can press `g?` for help in this menu.
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
-        'lua_ls', -- Lua Language server
+        'lua-language-server', -- Lua Language server
         'stylua', -- Used to format Lua code
         -- You can add other tools here that you want Mason to install
       })
@@ -793,21 +793,26 @@ require('lazy').setup({
     -- change the command in the config to whatever the name of that colorscheme is.
     --
     -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
-    'folke/tokyonight.nvim',
-    priority = 1000, -- Make sure to load this before all the other start plugins.
-    config = function()
-      ---@diagnostic disable-next-line: missing-fields
-      require('tokyonight').setup {
-        styles = {
-          comments = { italic = false }, -- Disable italics in comments
-        },
-      }
-
-      -- Load the colorscheme here.
-      -- Like many other themes, this one has different styles, and you could load
-      -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-      vim.cmd.colorscheme 'tokyonight'
-    end,
+    -- 'folke/tokyonight.nvim',
+    --  priority = 1000, -- Make sure to load this before all the other start plugins.
+    --  config = function()
+    --    ---@diagnostic disable-next-line: missing-fields
+    --    require('tokyonight').setup {
+    --      styles = {
+    --        comments = { italic = false }, -- Disable italics in comments
+    --      },
+    --    }
+    --
+    --    -- Load the colorscheme here.
+    --    -- Like many other themes, this one has different styles, and you could load
+    --    -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
+    --    vim.cmd.colorscheme 'tokyonight'
+    --  end,
+  },
+  {
+    'shaunsingh/nord.nvim',
+    priority = 1000, -- make sure to load this before all the other start plugins
+    config = function() require('nord').set() end,
   },
 
   -- Highlight todo, notes, etc in comments
@@ -851,13 +856,14 @@ require('lazy').setup({
 
   { -- Highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',
+    build = ':TSUpdate',
     config = function()
       local filetypes = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' }
-      require('nvim-treesitter').install(filetypes)
-      vim.api.nvim_create_autocmd('FileType', {
-        pattern = filetypes,
-        callback = function() vim.treesitter.start() end,
-      })
+      require('nvim-treesitter.configs').setup {
+        ensure_installed = filetypes,
+        auto_install = true,
+        highlight = { enable = true },
+      }
     end,
   },
 
